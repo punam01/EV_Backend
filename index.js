@@ -3,6 +3,7 @@ const express = require("express")
 const app = express()
 const userRoutes = require("./routes/userRoutes")
 const carRoutes = require("./routes/carRoutes")
+const locationRoutes = require("./routes/locationRoutes")
 const connectDB = require("./db/connect")
 const PORT = process.env.PORT || 5000
 
@@ -14,6 +15,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/user", userRoutes)
 app.use("/api/car", carRoutes)
+app.use("/api/location", locationRoutes)
 
 const start = async () => {
     try {
