@@ -19,7 +19,7 @@ const demoDriveSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
         validate: {
-            validator: function(value) {
+            validator: function (value) {
                 return value > new Date();
             },
             message: 'Booking time must be in the future'
@@ -30,12 +30,12 @@ const demoDriveSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    contact:{
+    contact: {
         type: String,
         required: true,
-        unique: true       
+        unique: true
     },
-    bookStatus:{
+    bookStatus: {
         type: Boolean,
         required: true,
     }
