@@ -28,11 +28,17 @@ const locationSchema = new mongoose.Schema({
         required:true,
         trim:true,
     },
-    pincode:{
+    state:{
         type:String,
         required:true,
         trim:true,
     },
+    availability: [
+        {
+            carModel: String,
+            availableTimes: [Date]
+        }
+    ]
 })
 
 module.exports = mongoose.model('Location', locationSchema)
