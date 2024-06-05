@@ -1,8 +1,8 @@
-const PreBooking = require("../models/DemoDrive")
+const DemoDrive = require("../models/DemoDrive")
 
 const getAllDemoBookings=async(req,res)=>{
     try{
-        const booking = await PreBooking.find()
+        const booking = await DemoDrive.find()
         res.send(booking)
     }catch(error){
         console.log(error)
@@ -13,7 +13,7 @@ const getUserHistory = async (req, res) => {
     try {
         const userId = req.params.user_Id;
         console.log(userId)
-        const history = await PreBooking.find({ userId }); 
+        const history = await DemoDrive.find({ userId }); 
         console.log(history)
         if (!history || history.length === 0) {
             return res.status(404).json({ msg: 'History not found' });
@@ -27,18 +27,19 @@ const getUserHistory = async (req, res) => {
 }
 
 const addDemoBooking=async(req,res)=>{
-    const { userId,locationId,modelName,bookingTime,paymentMade ,contact} = req.body;
+    const { userId,locationId,modelName,bookingTime,paymentMade ,contact,bookStatus} = req.body;
     try{
-       const newBooking=new PreBooking({
+       const newBooking=new DemoDrive({
         userId,
         locationId,
         modelName,
         bookingTime,
         paymentMade,
-        contact
+        contact,
+        bookStatus
        })
        await newBooking.save();
-       res.status(201).json({ msg: 'Demo Booking done successfully', preBooking: newBooking });
+       res.status(201).json({ msg: 'Demo Booking done successfully', DemoDrive: newBooking });
     }
     catch(error){
         if(error.code===11000){
@@ -49,9 +50,31 @@ const addDemoBooking=async(req,res)=>{
     }
 }
 
+const cancelBooking = async (req, res) => {
+    const { bookId, bookStatus } = req.body;
+    console.log(bookId);
+    console.log(bookStatus);
+    try {
+        const canceledBooking = await DemoDrive.findByIdAndUpdate(
+            bookId, 
+            { bookStatus },
+            { new: true } 
+        );
+
+        if (!canceledBooking) {
+            return res.status(404).json({ msg: 'Booking not found' });
+        }
+
+        res.status(200).json({ msg: 'Booking cancelled successfully', canceledBooking });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: 'Server error' });
+    }
+}
 
 module.exports = {
     getAllDemoBookings,
     getUserHistory,
-    addDemoBooking
+    addDemoBooking,
+    cancelBooking
 }

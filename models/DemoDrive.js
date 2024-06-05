@@ -20,7 +20,6 @@ const demoDriveSchema = new mongoose.Schema({
         default: Date.now,
         validate: {
             validator: function(value) {
-                // Ensure bookingTime is greater than current time
                 return value > new Date();
             },
             message: 'Booking time must be in the future'
@@ -35,6 +34,10 @@ const demoDriveSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true       
+    },
+    bookStatus:{
+        type: Boolean,
+        required: true,
     }
 });
 
