@@ -24,17 +24,44 @@ const getQuotationById = async (req, res) => {
         res.status(500).json({ msg: 'Server error' });
     }
 }
-const getConfigDetailsById=async(req,res)=>{
-    try{
-        const quotationId=req.params.qId
-        const configDetails=await Quotation.find({_id:quotationId},'modelId configDetails')
+
+const getConfigDetailsById = async (req, res) => {
+    try {
+        const quotationId = req.params.qId
+        const configDetails = await Quotation.find({ _id: quotationId }, 'modelId configDetails')
         res.send(configDetails)
-    }catch(error){
+    } catch (error) {
         console.log(error)
-        res.status(500).json({msg:"SErver Errors"})
+        res.status(500).json({ msg: "SErver Errors" })
     }
 }
 
+const updateQuotation=async(req,res)=>{
+    try {
+        const { id } = req.params;
+        const { configDetails } = req.body;
+        const quotation = await Quotation.findById(id);
+        if (!quotation) {
+            return res.status(404).send({ message: 'Quotation not found' });
+        }
+
+        if (configDetails) {
+            for (const [key, value] of Object.entries(configDetails)) {
+                quotation.configDetails.set(key, { ...quotation.configDetails.get(key), ...value });
+            }
+        }
+        let calculatedTotalPrice = 0;
+        for (const value of quotation.configDetails.values()) {
+            calculatedTotalPrice += value.price;
+        }
+        quotation.totalPrice = calculatedTotalPrice;
+        await quotation.save();
+
+        res.status(200).send(quotation);
+    } catch (error) {
+        res.status(500).send({ message: error.message });
+    }
+}
 const deletedQuotation = async (req, res) => {
     try {
         const deleteQ = await Quotation.findByIdAndDelete(req.params.id);
@@ -51,5 +78,6 @@ module.exports = {
     getAllQuotations,
     getQuotationById,
     getConfigDetailsById,
+    updateQuotation,
     deletedQuotation
 }
