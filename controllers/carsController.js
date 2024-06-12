@@ -21,15 +21,18 @@ const getAllCars = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 }
-
 const getAllVariants = async (req, res) => {
   try {
-    const modelName = req.params.modelName; 
+    const modelName = req.params.modelName;
     const car = await Car.findOne({ name: modelName }).select('variants');
     if (!car) {
       return res.status(404).json({ message: 'Car model not found' });
     }
-    res.json(car.variants); 
+    const formattedVariants = car.variants.map(variant => ({
+      ...variant._doc,
+      features: Array.isArray(variant.features) ? variant.features.join(', ') : variant.features,
+    }));
+    res.json(formattedVariants);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -37,24 +40,16 @@ const getAllVariants = async (req, res) => {
 
 const getDesiredVariant = async (req, res) => {
   try {
-    const { color, modelName, steering, trim, minPrice, maxPrice } = req.query;
+    const { color, modelName, steering, minPrice, maxPrice } = req.query;
 
     const query = {};
-
-    if (color) {
-      query['variants.color'] = color;
-    }
 
     if (modelName) {
       query.name = modelName;
     }
 
     if (steering) {
-      query['variants.steering'] = steering;
-    }
-
-    if (trim) {
-      query['variants.trim'] = trim;
+      query['steering'] = steering;
     }
 
     if (minPrice && maxPrice) {
@@ -65,13 +60,24 @@ const getDesiredVariant = async (req, res) => {
       query['variants.price'] = { $lte: maxPrice };
     }
 
+    if (color) {
+      query['variants.customizableOptions'] = { $elemMatch: { name: 'color', 'options.name': color } };
+    }
 
-    const desiredVariant = await Car.findOne(query).populate('variants');
-    res.json(desiredVariant);
+    const desiredVariants = await Car.find(query).populate('variants');
+    if (!desiredVariants || desiredVariants.length === 0) {
+      return res.status(404).json({ message: 'Variants not found' });
+    }
+    console.log(desiredVariants)
+    res.json(desiredVariants);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
   }
-}
+};
+
+
+
 module.exports = {
   getCarById,
   getAllCars,

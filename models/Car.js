@@ -1,14 +1,13 @@
 const mongoose = require('mongoose');
 
 const carSchema = new mongoose.Schema({
+    modelId: {
+        type: String,
+        required: true
+    },
     name: {
         type: String,
         required: true,
-        unique:true
-    },
-    manufacturer: {
-        type: String,
-        required: true
     },
     basePrice: {
         type: Number,
@@ -18,12 +17,14 @@ const carSchema = new mongoose.Schema({
     range: {
         type: Number,
         required: true,
-        min: 0
-    },
+        min: 0,
+        description: 'Range in miles'
+    },    
     topSpeed: {
         type: Number,
         required: true,
-        min: 0
+        min: 0,
+        description: 'speed in miles per hour'
     },
     seatingCapacity: {
         type: Number,
@@ -38,18 +39,24 @@ const carSchema = new mongoose.Schema({
     acceleration: {
         type: Number,
         required: true,
-        min: 0
+        min: 0,
+        description:"Acceleration time from 0 to 60 miles per hour (mph)"
     },
     images: [{
         type: String,
         required: true
     }],
+    color: [String], // Array of available colors
     steering:{
         type:String,
         enum:[
             "wheel",
             "yoke"
         ]
+    },
+    autopilot: {
+        type: Boolean,
+        default: false 
     },
     variants: [{
         name: {
@@ -61,14 +68,12 @@ const carSchema = new mongoose.Schema({
             required: true,
             min: 0
         },
-        features: {
-            type: Map,
-            of: mongoose.Schema.Types.Mixed,
-            required: true
-        },
-        customizableOptions: {
-            type: Map,
-            of: [{
+        customizableOptions: [{
+            name: {
+                type: String,
+                required: true
+            },
+            options: [{
                 name: {
                     type: String,
                     required: true
@@ -79,7 +84,7 @@ const carSchema = new mongoose.Schema({
                     min: 0
                 }
             }]
-        }
+        }]
     }]
 });
 
