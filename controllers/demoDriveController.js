@@ -1,4 +1,5 @@
 const DemoDrive = require("../models/DemoDrive")
+const mongoose = require('mongoose');
 
 const getAllDemoBookings = async (req, res) => {
     try {
@@ -11,10 +12,12 @@ const getAllDemoBookings = async (req, res) => {
 
 const getUserHistory = async (req, res) => {
     try {
-        const userId = req.params.user_Id;
-        console.log(userId)
+        const { userId } = req.body; 
+        console.log("UserId from request body:", userId);
+
         const history = await DemoDrive.find({ userId });
-        console.log(history)
+        console.log("History", history);
+
         if (!history || history.length === 0) {
             return res.status(404).json({ msg: 'History not found' });
         }
@@ -26,29 +29,30 @@ const getUserHistory = async (req, res) => {
     }
 }
 
-const addDemoBooking = async (req, res) => {
-    const { userId, locationId, modelName, bookingTime, paymentMade, contact, bookStatus } = req.body;
+const createDemoBooking = async (req, res) => {
     try {
-        const newBooking = new DemoDrive({
+        const { userId, locationId, modelName, bookingTime, contact } = req.body;
+
+        if (!userId || !locationId || !modelName || !bookingTime || !contact) {
+            return res.status(400).json({ msg: 'All fields are required' });
+        }
+
+        const demoBooking = new DemoDrive({
             userId,
             locationId,
             modelName,
             bookingTime,
-            paymentMade,
-            contact,
-            bookStatus
-        })
-        await newBooking.save();
-        res.status(201).json({ msg: 'Demo Booking done successfully', DemoDrive: newBooking });
+            contact
+        });
+
+        await demoBooking.save();
+        res.status(201).json({ msg: 'Demo booking created successfully' });
+    } catch (error) {
+        console.error('Error creating demo booking:', error);
+        res.status(500).json({ msg: 'Server error' });
     }
-    catch (error) {
-        if (error.code === 11000) {
-            res.status(400).json({ msg: 'One pre booking per mobile number' });
-        } else {
-            res.status(500).json({ msg: 'Server error' });
-        }
-    }
-}
+};
+
 
 const cancelBooking = async (req, res) => {
     const { bookId, bookStatus } = req.body;
@@ -93,7 +97,7 @@ const rescheduleBooking = async (req, res) => {
 module.exports = {
     getAllDemoBookings,
     getUserHistory,
-    addDemoBooking,
+    createDemoBooking,
     cancelBooking,
     rescheduleBooking
 }

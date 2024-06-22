@@ -46,6 +46,7 @@ const getLocationByQuery = async (req, res) => {
 }
 
 const updateTime = async (req, res) => {
+    console.log(req.boady)
     try {
         const { locationId, carModel, timeSlot, action } = req.body;
 
@@ -86,9 +87,84 @@ const updateTime = async (req, res) => {
     }
 };
 
+const getCarAvailabilityByPincode = async (req, res) => {
+    try {
+        const { pincode } = req.query;
+        if (!pincode) {
+            return res.status(400).json({ msg: 'Pincode is required' });
+        }
+
+        const locations = await Location.find({ pincode });
+        if (locations.length === 0) {
+            return res.status(404).json({ msg: 'No locations found with the provided pincode' });
+        }
+
+        const locationData = locations.map(location => ({
+            _id:location._id,
+            name: location.name,
+            address: location.address,
+            city: location.city,
+            state: location.state,
+            pincode: location.pincode,
+            contact: location.contact,
+            availability: location.availability.map(availability => ({
+                carModel: availability.carModel,
+                availableTimes: availability.availableTimes.map(time => {
+                    let parsedTime = null;
+                    if (time.$date && time.$date.$numberLong) {
+                        parsedTime = new Date(parseInt(time.$date.$numberLong));
+                    } else if (typeof time === 'string' || time instanceof String) {
+                        parsedTime = new Date(time);
+                    } else if (time instanceof Date) {
+                        parsedTime = time;
+                    } else {
+                        console.error('Invalid time format:', time);
+                    }
+                    return parsedTime && !isNaN(parsedTime) ? parsedTime : null;
+                }).filter(time => time !== null)
+            }))
+        }));
+
+        res.status(200).json(locationData);
+    } catch (error) {
+        console.error('Error finding locations by pincode:', error);
+        res.status(500).json({ msg: 'Server error' });
+    }
+};
+
+const removeDateTimeFromAvailability = async (locationId, carModel, dateTimeToRemove) => {
+    console.log(locationId,carModel,dateTimeToRemove)
+    try {
+        const location = await Location.findById(locationId);
+        if (!location) {
+            throw new Error('Location not found');
+        }
+
+        // Find the carModel in availability and remove the dateTimeToRemove
+        const updatedAvailability = location.availability.map(item => {
+            console.log(item.carModel,carModel)
+            if (item.carModel === carModel) {
+                return {
+                    carModel: item.carModel,
+                    availableTimes: item.availableTimes.filter(time => time.getTime() !== dateTimeToRemove.getTime())
+                };
+            }
+            return item;
+        });
+
+        location.availability = updatedAvailability;
+        await location.save();
+        return true;
+    } catch (error) {
+        console.error('Error updating availability:', error);
+        return false;
+    }
+};
 
 module.exports = {
     getLocationById,
     getLocationByQuery,
-    updateTime
+    updateTime,
+    getCarAvailabilityByPincode,
+    removeDateTimeFromAvailability
 }

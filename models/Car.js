@@ -46,7 +46,7 @@ const carSchema = new mongoose.Schema({
         type: String,
         required: true
     }],
-    color: [String], // Array of available colors
+    color: [String], 
     steering:{
         type:String,
         enum:[
@@ -58,7 +58,24 @@ const carSchema = new mongoose.Schema({
         type: Boolean,
         default: false 
     },
-    variants: [{
+    customizableOptions: [{
+        name: {
+            type: String,
+            required: true
+        },
+        options: [{
+            name: {
+                type: String,
+                required: true
+            },
+            price: {
+                type: Number,
+                required: true,
+                min: 0
+            }
+        }]
+    }]
+    /*variants: [{
         name: {
             type: String,
             required: true
@@ -68,24 +85,14 @@ const carSchema = new mongoose.Schema({
             required: true,
             min: 0
         },
-        customizableOptions: [{
-            name: {
-                type: String,
-                required: true
-            },
-            options: [{
-                name: {
-                    type: String,
-                    required: true
-                },
-                price: {
-                    type: Number,
-                    required: true,
-                    min: 0
-                }
-            }]
-        }]
-    }]
+        
+    }]*/
 });
 
 module.exports = mongoose.model('Car', carSchema);
+
+
+
+
+
+

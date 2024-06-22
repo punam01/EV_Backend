@@ -1,6 +1,11 @@
 const mongoose = require("mongoose")
 
 const userSchema = new mongoose.Schema({
+    custom_id: {
+        type: String,
+        required: true,
+        unique:true
+      },
     first_name:{
         type:String,
         required:true
@@ -33,6 +38,11 @@ const userSchema = new mongoose.Schema({
         required: true,
         trim: true,
         match: [/^\d{5,6}$/, 'Please use a valid pincode.']
+    },
+    testdrive:{
+        type:Boolean,
+        default:false,
+        required:true
     }
 })
 

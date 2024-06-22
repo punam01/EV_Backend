@@ -2,13 +2,11 @@ const mongoose = require('mongoose');
 
 const demoDriveSchema = new mongoose.Schema({
     userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        type: String,
         required: true
     },
     locationId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Location',
+        type: String,
         required: true
     },
     modelName: {
@@ -17,14 +15,13 @@ const demoDriveSchema = new mongoose.Schema({
     },
     bookingTime: {
         type: Date,
-        default: Date.now,
+        required: true,
         validate: {
             validator: function (value) {
                 return value > new Date();
             },
             message: 'Booking time must be in the future'
         }
-
     },
     paymentMade: {
         type: Boolean,
@@ -33,11 +30,12 @@ const demoDriveSchema = new mongoose.Schema({
     contact: {
         type: String,
         required: true,
-        unique: true
+        unique:true
     },
     bookStatus: {
-        type: Boolean,
-        required: true,
+        type: String,
+        enum: ['booked', 'cancelled'],
+        default: 'booked'
     }
 });
 

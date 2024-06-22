@@ -15,7 +15,7 @@ const getCarById = async (req, res) => {
 
 const getAllCars = async (req, res) => {
   try {
-    const models = await Car.find({}, 'name manufacturer basePrice range topSpeed seatingCapacity cargoCapacity acceleration images');
+    const models = await Car.find({}, 'modelId name manufacturer basePrice range topSpeed seatingCapacity cargoCapacity acceleration images steering autopilot variants');
     res.json(models)
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -52,12 +52,14 @@ const getDesiredVariant = async (req, res) => {
       query['steering'] = steering;
     }
 
-    if (minPrice && maxPrice) {
-      query['variants.price'] = { $gte: minPrice, $lte: maxPrice };
-    } else if (minPrice) {
-      query['variants.price'] = { $gte: minPrice };
-    } else if (maxPrice) {
-      query['variants.price'] = { $lte: maxPrice };
+    if (minPrice || maxPrice) {
+      query['variants.price'] = {};
+      if (minPrice) {
+        query['variants.price']['$gte'] = minPrice;
+      }
+      if (maxPrice) {
+        query['variants.price']['$lte'] = maxPrice;
+      }
     }
 
     if (color) {
@@ -68,15 +70,12 @@ const getDesiredVariant = async (req, res) => {
     if (!desiredVariants || desiredVariants.length === 0) {
       return res.status(404).json({ message: 'Variants not found' });
     }
-    console.log(desiredVariants)
     res.json(desiredVariants);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
   }
 };
-
-
 
 module.exports = {
   getCarById,

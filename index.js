@@ -7,11 +7,15 @@ const carRoutes = require("./routes/carRoutes")
 const locationRoutes = require("./routes/locationRoutes")
 const demoRoutes = require("./routes/demoDriveRoutes")
 const quotationRoutes=require("./routes/quotationRoutes")
+const blogRoutes=require("./routes/blogRoutes")
 const connectDB = require("./db/connect")
+
 const PORT = process.env.PORT || 5000
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173', // Replace with your frontend domain
+  }));
 app.get("/", (req, res) => {
     res.send("Hi, I am Live!")
 })
@@ -21,6 +25,8 @@ app.use("/api/car", carRoutes)
 app.use("/api/location", locationRoutes)
 app.use("/api/demoBook", demoRoutes)
 app.use("/api/quotation",quotationRoutes)
+app.use("/api/blogs",blogRoutes)
+
 const start = async () => {
     try {
         await connectDB(process.env.MONGO_URI)
