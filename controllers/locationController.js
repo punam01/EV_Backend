@@ -124,7 +124,6 @@ const getCarAvailabilityByPincode = async (req, res) => {
                 }).filter(time => time !== null)
             }))
         }));
-
         res.status(200).json(locationData);
     } catch (error) {
         console.error('Error finding locations by pincode:', error);

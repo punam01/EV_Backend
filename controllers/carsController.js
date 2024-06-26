@@ -2,11 +2,11 @@ const Car = require("../models/Car")
 
 const getCarById = async (req, res) => {
   try {
-    const user = await Car.findById(req.params.id);
-    if (!user) {
+    const car = await Car.findById(req.params.id);
+    if (!car) {
       return res.status(404).json({ msg: 'Car not found' });
     }
-    res.status(200).json(user);
+    res.status(200).json(car);
   } catch (error) {
     console.error(error);
     res.status(500).json({ msg: 'Server error' });
@@ -77,9 +77,48 @@ const getDesiredVariant = async (req, res) => {
   }
 };
 
+const compareCars = async (req, res) => {
+  try {
+    const { model1, model2 } = req.query;
+
+    const car1 = await Car.findOne({ modelId: model1 });
+    const car2 = await Car.findOne({ modelId: model2 });
+
+    if (!car1 || !car2) {
+      return res.status(404).json({ message: 'Car models not found.' });
+    }
+
+    const comparisonData = {
+      basePrice1: car1.basePrice,
+      basePrice2: car2.basePrice,
+      range1: car1.range,
+      range2: car2.range,
+      topSpeed1: car1.topSpeed,
+      topSpeed2: car2.topSpeed,
+      seatingCapacity1: car1.seatingCapacity,
+      seatingCapacity2: car2.seatingCapacity
+    };
+
+    res.json(comparisonData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+const getAllModelsById = async (req, res) => {
+  try {
+    const models = await Car.find({}, 'modelId name');
+    res.json(models);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 module.exports = {
   getCarById,
   getAllCars,
   getDesiredVariant,
-  getAllVariants
+  getAllVariants,compareCars,
+  getAllModelsById
 }
