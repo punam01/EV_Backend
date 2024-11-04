@@ -13,7 +13,7 @@ const demoDriveSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    bookingTime: {
+    /*bookingTime: {
         type: Date,
         required: true,
         validate: {
@@ -22,7 +22,12 @@ const demoDriveSchema = new mongoose.Schema({
             },
             message: 'Booking time must be in the future'
         }
+    },*/
+    bookingTime: {
+        type: String,
+        required: true,
     },
+    
     paymentMade: {
         type: Boolean,
         default: false

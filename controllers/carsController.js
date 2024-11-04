@@ -15,7 +15,7 @@ const getCarById = async (req, res) => {
 
 const getAllCars = async (req, res) => {
   try {
-    const models = await Car.find({}, 'modelId name manufacturer basePrice range topSpeed seatingCapacity cargoCapacity acceleration images steering autopilot variants');
+    const models = await Car.find({}, 'modelId name manufacturer basePrice range topSpeed seatingCapacity cargoCapacity acceleration images steering autopilot variants customizableOptions isConfig');
     res.json(models)
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -80,7 +80,7 @@ const getDesiredVariant = async (req, res) => {
 const compareCars = async (req, res) => {
   try {
     const { model1, model2 } = req.query;
-
+    console.log(model1,model2)
     const car1 = await Car.findOne({ modelId: model1 });
     const car2 = await Car.findOne({ modelId: model2 });
 
@@ -96,10 +96,15 @@ const compareCars = async (req, res) => {
       topSpeed1: car1.topSpeed,
       topSpeed2: car2.topSpeed,
       seatingCapacity1: car1.seatingCapacity,
-      seatingCapacity2: car2.seatingCapacity
+      seatingCapacity2: car2.seatingCapacity,
+      customizableOptions1: car1.customizableOptions,
+      customizableOptions2: car2.customizableOptions,
+      cargoCapacity1: car1.cargoCapacity,
+      cargoCapacity2: car2.cargoCapacity
     };
 
     res.json(comparisonData);
+    console.log(res);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });

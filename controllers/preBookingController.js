@@ -5,6 +5,7 @@ const getBookingHistory = async (req, res) => {
     try {
         const { userId } = req.params;
         const bookings = await PreBooking.find({ userId });
+        console.log(bookings);
         res.status(200).json(bookings);
     } catch (error) {
         console.error(error);
@@ -22,7 +23,7 @@ const createBooking = async (req, res) => {
             bookingTime,
             contact
         });
-
+        console.log("new bookings: ",newBooking);
         await newBooking.save();
         res.status(201).json(newBooking);
     } catch (error) {

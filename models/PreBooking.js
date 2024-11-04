@@ -5,20 +5,18 @@ const preBookingSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    carId: {
+    carId:{
+        type:String,
+        required:true
+    },
+    /*carId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Car',
         required: true
-    },
+    }*/
     bookingTime: {
         type: Date,
-        required: true,
-        validate: {
-            validator: function (value) {
-                return value > new Date();
-            },
-            message: 'Booking time must be in the future'
-        }
+        required: true
     },
     paymentMade: {
         type: Boolean,

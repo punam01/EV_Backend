@@ -44,7 +44,13 @@ const createDemoBooking = async (req, res) => {
             bookingTime,
             contact
         });
-
+        console.log('Booking details:', 
+            userId,
+            locationId,
+            modelName,
+            bookingTime,
+            contact,
+        );
         await demoBooking.save();
         res.status(201).json({ msg: 'Demo booking created successfully' });
     } catch (error) {
