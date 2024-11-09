@@ -25,7 +25,6 @@ const preBookingSchema = new mongoose.Schema({
     contact: {
         type: String,
         required: true,
-        unique: true
     },
     bookStatus: {
         type: String,
@@ -33,5 +32,5 @@ const preBookingSchema = new mongoose.Schema({
         default: 'booked'
     }
 });
-
+preBookingSchema.index({ userId: 1, carId: 1 }, { unique: true });
 module.exports = mongoose.model('PreBooking', preBookingSchema);
