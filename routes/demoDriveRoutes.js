@@ -6,7 +6,7 @@ const { getAllDemoBookings,rescheduleBooking,cancelBooking, getUserHistory,creat
 router.route("/").post(createDemoBooking)
 router.route("/list").get(getAllDemoBookings)
 router.route("/history").post(getUserHistory)
-router.route("/").put(cancelBooking)
+router.route("/cancel").post(cancelBooking)
 router.route("/reschedule").put(rescheduleBooking)
 
 module.exports = router

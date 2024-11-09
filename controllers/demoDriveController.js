@@ -61,26 +61,23 @@ const createDemoBooking = async (req, res) => {
 
 
 const cancelBooking = async (req, res) => {
-    const { bookId, bookStatus } = req.body;
+    const { bookId } = req.body;
     console.log(bookId);
-    console.log(bookStatus);
-    try {
-        const canceledBooking = await DemoDrive.findByIdAndUpdate(
-            bookId,
-            { bookStatus },
-            { new: true }
-        );
 
-        if (!canceledBooking) {
+    try {
+        const deletedBooking = await DemoDrive.findByIdAndDelete(bookId);
+
+        if (!deletedBooking) {
             return res.status(404).json({ msg: 'Booking not found' });
         }
 
-        res.status(200).json({ msg: 'Booking cancelled successfully', canceledBooking });
+        res.status(200).json({ msg: 'Booking deleted successfully', deletedBooking });
     } catch (error) {
         console.error(error);
         res.status(500).json({ msg: 'Server error' });
     }
 }
+
 const rescheduleBooking = async (req, res) => {
     const { bookId, newBookingTime } = req.body;
     try {

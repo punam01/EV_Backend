@@ -121,11 +121,30 @@ const getAllModelsById = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+const getCarByModelId = async (req, res) => {
+  const { modelId } = req.body;  // Get modelId from the request body
+  console.log("Received modelId:", modelId);
+  try {
+    // Query the Car collection to find the car by modelId
+    const car = await Car.findOne({ modelId });
+    console.log('CAR:', car);
+    if (!car) {
+      return res.status(404).json({ msg: 'Car not found' });
+    }
+
+    // Send the car details as the response
+    res.status(200).json({ msg: 'Car found successfully', car });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: 'Server error' });
+  }
+};
 
 module.exports = {
   getCarById,
   getAllCars,
   getDesiredVariant,
   getAllVariants,compareCars,
-  getAllModelsById
+  getAllModelsById,
+  getCarByModelId
 }
