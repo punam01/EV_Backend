@@ -32,7 +32,7 @@ app.use('/api/prebooking', preBookingRoutes);
 
 const start = async () => {
     try {
-        await connectDB("mongodb+srv://user1:usertest123@electricvehicleapi.7exgrd1.mongodb.net/?retryWrites=true&w=majority&appName=ElectricVehicleAPI")
+        await connectDB(process.env.MONGO_URI)
         app.listen(PORT, () => {
             console.log(`Server started at port${PORT}`)
         })

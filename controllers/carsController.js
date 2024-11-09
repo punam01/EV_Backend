@@ -100,7 +100,9 @@ const compareCars = async (req, res) => {
       customizableOptions1: car1.customizableOptions,
       customizableOptions2: car2.customizableOptions,
       cargoCapacity1: car1.cargoCapacity,
-      cargoCapacity2: car2.cargoCapacity
+      cargoCapacity2: car2.cargoCapacity,
+      acceleration1: car1.acceleration,
+      acceleration2: car2.acceleration
     };
 
     res.json(comparisonData);
