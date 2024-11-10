@@ -5,7 +5,7 @@ const getBookingHistory = async (req, res) => {
     try {
         const { userId } = req.params;
         const bookings = await PreBooking.find({ userId });
-        console.log(bookings);
+        console.log("booking",bookings);
         res.status(200).json(bookings);
     } catch (error) {
         console.error(error);
@@ -15,13 +15,16 @@ const getBookingHistory = async (req, res) => {
 
 const createBooking = async (req, res) => {
     try {
-        const { userId, carId, bookingTime, contact } = req.body;
+        const { userId, carId, bookingTime, contact ,customization,location,estimatedPrice} = req.body;
 
         const newBooking = new PreBooking({
             userId,
             carId,
             bookingTime,
-            contact
+            contact,
+            customization,
+            location,
+            estimatedPrice
         });
         console.log("new bookings: ",newBooking);
         await newBooking.save();
