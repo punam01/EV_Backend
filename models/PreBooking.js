@@ -62,11 +62,11 @@ const preBookingSchema = new mongoose.Schema({
         required: true
       },
       location: {
-        address: { type: String, required: true },
-        city: { type: String, required: true },
-        name: { type: String, required: true },
-        pincode: { type: String, required: true, match: [/^\d{6}$/, 'Please enter a valid 6-digit pincode'] },
-        state: { type: String, required: true }
+        address: { type: String },
+        city: { type: String},
+        name: { type: String},
+        pincode: { type: String },
+        state: { type: String }
       },
     });
 preBookingSchema.index({ userId: 1, carId: 1 }, { unique: true });
